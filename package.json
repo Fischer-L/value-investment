@@ -86,7 +86,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "compression": "^1.7.3",
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
