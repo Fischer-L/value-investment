@@ -142,13 +142,13 @@ class App extends Component {
       }
       appContent.push(this.renderNoteBoard(this.state));
     }
-    appContent.push(...this.renderBookmarkBoards(this.state));
 
     return (
       <div className="app">
         <MainBar isLogin={isLogin} allowLogin={allowLogin} {...this.mainBarCallbacks} />
         <section className="appContent">
           {appContent}
+          { this.renderBookmarkBoards(this.state) }
         </section>
         { this.renderLoginPrompt(this.state) }
         <CalculationPanel />
