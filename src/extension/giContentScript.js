@@ -24,9 +24,11 @@ const autoEnlargeJob = {
     localVars.trialCounts = 0;
 
     if (root) {
-      root.querySelector('div').style.width = 'auto';
+      document.body.style.maxWidth = 'none';
+      root.querySelector('.box_style').style.width = 'auto';
       localVars.observer = new MutationObserver(() => {
-        root.querySelector('div').style.width = 'auto';
+        document.body.style.maxWidth = 'none';
+        root.querySelector('.box_style').style.width = 'auto';
       });
       localVars.observer.observe(root, { childList: true, subtree: true });
     }
