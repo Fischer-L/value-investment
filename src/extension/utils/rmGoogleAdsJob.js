@@ -19,7 +19,7 @@ const rmGoogleAdsJob = {
       if (!ads.length) {
         return;
       }
-      ads.forEach(ad => ad.parentElement.remove());
+      ads.forEach(ad => ad.remove());
     });
     localVars.observer.observe(document.body, { childList: true, subtree: true });
   },
