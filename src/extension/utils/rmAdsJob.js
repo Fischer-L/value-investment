@@ -1,57 +1,39 @@
-import DOMAINS from '~/utils/domains';
-import localVarsOf from './localVarsOf';
-
-function normalizeOrigin(origin) {
-  return origin.endsWith('/') ? origin : origin + '/';
-}
-
-const rmAdsJob = {
-  id: 'rmAdsJob',
+class RmAdsJob {
+  constructor(adSelectors) {
+    this.adSelectors = adSelectors;
+    this.observer = null;
+    this.removed = new Set();
+  }
 
   _rmAds() {
-    const localVars = this._localVars;
-    if (localVars.observer) {
+    this.adSelectors.forEach(selector => {
+      const elem = document.querySelector(selector);
+      if (elem) {
+        elem.remove();
+        this.removed.add(selector);
+      }
+    });
+  }
+
+  _allClear() {
+    return this.adSelectors.every(selector => this.removed.has(selector));
+  }
+
+  exec() {
+    this._rmAds();
+    if (this._allClear()) {
       return;
     }
 
-    localVars.observer = new MutationObserver(() => {
-      const ads = Array.from(document.querySelectorAll('.adsbygoogle'));
-      if (!ads.length) {
-        return;
-      }
-
-      localVars.observer.disconnect();
-      localVars.observer = null;
-
-      ads.forEach(ad => ad.remove());
-      // We don not know how many ad containers are out there so chose a magic number, 30.
-      for (let i = 0; i < 30; i++) {
-        const adContainer = document.querySelector(`#AD${i}`);
-        if (adContainer) {
-          adContainer.remove();
-        }
-      }
-    });
-    localVars.observer.observe(document.body, { childList: true, subtree: true });
-  },
-
-  isTargetPage() {
-    const origin = normalizeOrigin(window.location.origin);
-    return Object.values(DOMAINS).some(domain => normalizeOrigin(domain) === origin);
-  },
-
-  init() {
-    this._localVars = localVarsOf(this.id, {
-      observer: null,
-    });
-    if (this._localVars.init) {
-      return;
-    }
-    if (this.isTargetPage()) {
-      this._localVars.init = true;
+    this.observer = new MutationObserver(() => {
       this._rmAds();
-    }
-  },
-};
+      if (this._allClear()) {
+        this.observer.disconnect();
+        this.observer = null;
+      }
+    });
+    this.observer.observe(document.body, { childList: true, subtree: true });
+  }
+}
 
-export default rmAdsJob;
+export default RmAdsJob;

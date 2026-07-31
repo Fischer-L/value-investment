@@ -1,6 +1,29 @@
 import giURL, { PATH_TYPE } from './utils/giURL';
 import localVarsOf from './utils/localVarsOf';
+import RmAdsJob from './utils/rmAdsJob';
 import runJobs from './utils/runJobs';
+
+const rmPopupJob = {
+  id: 'gi-rmPopupJob',
+
+  isTargetPage() {
+    return true;
+  },
+
+  init() {
+    this._localVars = localVarsOf(this.id, {
+      job: null,
+    });
+    if (this._localVars.init) {
+      return;
+    }
+    if (this.isTargetPage()) {
+      this._localVars.init = true;
+      this._localVars.job = new RmAdsJob([ '#ats-interstitial-root' ]);
+      this._localVars.job.exec();
+    }
+  },
+};
 
 const autoEnlargeJob = {
   id: 'gi-autoEnlargeJob',
@@ -51,4 +74,4 @@ const autoEnlargeJob = {
   },
 };
 
-runJobs(autoEnlargeJob);
+runJobs(rmPopupJob, autoEnlargeJob);
